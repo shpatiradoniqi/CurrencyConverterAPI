@@ -1,4 +1,3 @@
-
 Currency Converter API
 
 A robust and simple ASP.NET Core Web API for retrieving and converting currency exchange rates. This API leverages the Frankfurter API as its primary data source and includes enterprise-grade features such as authentication, caching, and resiliency.
@@ -73,37 +72,38 @@ dotnet run
 The API will be available at http://localhost:5000 (or another port as configured). You can access the Swagger documentation at http://localhost:5000/swagger.
 API Endpoints
 
-All endpoints require a valid JWT Bearer token in the Authorization header.
+All endpoints are prefixed with /api/v1/currency and require a valid JWT Bearer token in the Authorization header.
 1. Get Latest Exchange Rates
 
 Retrieves the latest exchange rates for a given base currency.
 
-    URL: /api/rates/latest
+    URL: /api/v1/currency/latest/{baseCurrency}
 
     Method: GET
 
     Authorization: User, Admin
 
-    Query Parameters:
+    Route Parameters:
 
-        base: The base currency code (e.g., USD). Defaults to EUR if not provided.
+        baseCurrency: The base currency code (e.g., USD).
 
     Example Request:
 
-curl -X GET "http://localhost:5000/api/rates/latest?base=USD" \
+curl -X GET "http://localhost:5000/api/v1/currency/latest/USD" \
 -H "Authorization: Bearer YOUR_JWT_TOKEN"
 
 2. Convert Currency
 
 Converts a specified amount from one currency to another.
 
-    URL: /api/convert
+    URL: /api/v1/currency/convert
 
-    Method: GET
+    Method: POST
 
     Authorization: User, Admin
 
-    Query Parameters:
+    Request Body:
+    A JSON object representing the ConvertCurrencyRequest with the following properties:
 
         from: The source currency code (e.g., USD).
 
@@ -113,14 +113,16 @@ Converts a specified amount from one currency to another.
 
     Example Request:
 
-curl -X GET "http://localhost:5000/api/convert?from=USD&to=EUR&amount=100" \
--H "Authorization: Bearer YOUR_JWT_TOKEN"
+curl -X POST "http://localhost:5000/api/v1/currency/convert" \
+-H "Authorization: Bearer YOUR_JWT_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{"from":"USD", "to":"EUR", "amount":100}'
 
 3. Get Historical Exchange Rates
 
 Retrieves historical exchange rates for a date range.
 
-    URL: /api/historical
+    URL: /api/v1/currency/history
 
     Method: GET
 
@@ -128,15 +130,15 @@ Retrieves historical exchange rates for a date range.
 
     Query Parameters:
 
-        start: The start date in YYYY-MM-DD format.
+        baseCurrency: The base currency code (e.g., USD).
 
-        end: The end date in YYYY-MM-DD format.
+        startDate: The start date in YYYY-MM-DD format.
 
-        base: The base currency code (e.g., USD).
+        endDate: The end date in YYYY-MM-DD format.
 
     Example Request:
 
-curl -X GET "http://localhost:5000/api/historical?start=2023-01-01&end=2023-01-05&base=USD" \
+curl -X GET "http://localhost:5000/api/v1/currency/history?baseCurrency=USD&startDate=2023-01-01&endDate=2023-01-05" \
 -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 
 Authentication
